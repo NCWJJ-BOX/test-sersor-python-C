@@ -125,11 +125,11 @@ def main():
 
     cam = cv2.VideoCapture(0)
 
-    if not cam.isOpened(): 
-        print("Camera not open")
-        return
-
     try:
+        if not cam.isOpened():
+            print("Camera not open")
+            return
+
         while True:
             distance, arduino = read_distance_from_arduino(serial, arduino)
 
@@ -158,6 +158,8 @@ def main():
     finally:
         arduino = relay_off(serial, arduino)
         cam.release()
+        if arduino is not None:
+            arduino.close()
 
 if __name__ == "__main__":
     main()

@@ -98,12 +98,12 @@ def main():
     pwm = setup_gpio(gpio)
     print("Starting...")
     cam = cv2.VideoCapture(0)
-    
-    if not cam.isOpened():
-        print("Camera not open")
-        return
-    
+
     try:
+        if not cam.isOpened():
+            print("Camera not open")
+            return
+
         while True:
             # Measure the distance from the Ultrasonic sensor
             dist = get_distance(gpio)
