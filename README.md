@@ -48,4 +48,5 @@ python test/python/integration/test_rpi_and_r3.py
 
 - Scripts that use `RPi.GPIO` and/or `cv2` may print a message and exit if those modules are not installed.
 - Serial scripts may print a message and exit if `pyserial` is not installed.
-- Image capture scripts write new images to `test/assets/images/captures/` by default.
+- `test_all.py` writes captures to `test/assets/images/captures/` by default.
+- `test_cam.py` and `test_rpi_and_r3.py` save `img_*.jpg` to the current working directory.
