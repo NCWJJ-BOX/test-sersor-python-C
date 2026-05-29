@@ -1,52 +1,90 @@
-# Test Folder Layout
+# Sensor Test Scripts
 
-This folder contains quick hardware/IO test scripts and sample assets.
+Quick hardware/IO test scripts for Raspberry Pi GPIO peripherals (ultrasonic, servo, relay, camera) and Arduino serial communication.
 
-## Layout
+## Project Structure
 
-- `test/python/gpio/` - Raspberry Pi GPIO tests (ultrasonic / servo / relay / camera)
-- `test/python/serial/` - Serial tests (Raspberry Pi <-> Arduino)
-- `test/python/integration/` - Integration tests (serial + camera)
-- `test/cpp/` - C++ experiments/tests
-- `test/assets/images/samples/` - Sample images committed to the repo
-- `test/assets/images/captures/` - Runtime captures (gitignored)
+```
+test-sersor-python-C/
+├── test/
+│   ├── python/
+│   │   ├── gpio/
+│   │   │   ├── test_all.py               # Combined: ultrasonic + relay + servo + camera
+│   │   │   ├── test_cam.py               # Ultrasonic-triggered camera capture
+│   │   │   ├── test_servo.py             # Ultrasonic-triggered servo sweep
+│   │   │   ├── test_relay.py             # Relay on/off loop
+│   │   │   ├── test_u.py                 # Ultrasonic distance print
+│   │   │   └── test_ultrasonic_and_servo.py
+│   │   ├── serial/
+│   │   │   ├── read_distance.py          # Read distance from Arduino
+│   │   │   ├── send_hello.py             # Send hello to Arduino
+│   │   │   └── read_0_1.py               # Read 0/1 values
+│   │   └── integration/
+│   │       └── test_rpi_and_r3.py        # Full integration: serial + camera + relay + servo
+│   ├── cpp/
+│   │   ├── r3.cpp                        # Arduino: ultrasonic + servo + serial commands
+│   │   ├── test.cpp                      # Arduino: ultrasonic + servo + 0/1 output
+│   │   ├── test-r3.cpp                   # Arduino: ultrasonic threshold + servo
+│   │   └── test-ultra-infra.cpp          # Arduino: ultrasonic + infrared + servo
+│   └── assets/images/samples/            # Sample captured images
+└── README.md
+```
 
-## Python Scripts
+## Features
 
-### GPIO (`test/python/gpio/`)
+- Modular test scripts — each sensor component has standalone test
+- GPIO-based ultrasonic distance (BCM: Trig=27, Echo=22)
+- PWM servo control with configurable angle
+- Relay on/off toggling
+- Camera capture with image saving
+- Average distance sampling (multi-sample)
+- Serial communication with Arduino
+- Arduino C++ supports serial command protocol (`relay_on`, `relay_off`, `move_servo <angle>`)
 
-- `test_all.py` - Combined GPIO flow (ultrasonic + relay + servo + camera capture)
-- `test_cam.py` - Ultrasonic + camera capture script
-- `test_relay.py` - Relay on/off loop test
-- `test_servo.py` - Ultrasonic-triggered servo movement test
-- `test_u.py` - Ultrasonic distance print test
-- `test_ultrasonic_and_servo.py` - Ultrasonic + servo combined test
+## Tech Stack
 
-### Serial (`test/python/serial/`)
+- **Python:** RPi.GPIO, pyserial, opencv-python (cv2)
+- **C++:** Arduino Servo library
+- **Hardware:** HC-SR04, SG90 servo, relay module, infrared sensor, RPi camera
 
-- `read_distance.py` - Read distance lines from serial and print `Distance: <value> cm`
-- `send_hello.py` - Send one `Hello from RPi` message over serial
-- `read_0_1.py` - Read and print `0`/`1` values from serial
+## Usage
 
-### Integration (`test/python/integration/`)
+### Python GPIO Tests
 
-- `test_rpi_and_r3.py` - Serial + camera integration with relay/servo commands
+```bash
+python test/python/gpio/test_all.py
+python test/python/gpio/test_u.py
+python test/python/gpio/test_servo.py
+python test/python/gpio/test_relay.py
+python test/python/gpio/test_cam.py
+```
 
-## Run Examples
-
-Run from repository root:
+### Serial Tests
 
 ```bash
 python test/python/serial/read_distance.py
-python test/python/serial/send_hello.py
-python test/python/serial/read_0_1.py
-python test/python/gpio/test_u.py
+```
+
+### Integration
+
+```bash
 python test/python/integration/test_rpi_and_r3.py
 ```
 
-## Notes
+### Arduino C++
 
-- Scripts that use `RPi.GPIO` and/or `cv2` may print a message and exit if those modules are not installed.
-- Serial scripts may print a message and exit if `pyserial` is not installed.
-- `test_all.py` writes captures to `test/assets/images/captures/` by default.
-- `test_cam.py` and `test_rpi_and_r3.py` save `img_*.jpg` to the current working directory.
+Upload `.cpp` files via Arduino IDE to target board.
+
+## Hardware Wiring
+
+| Component | Pin |
+|-----------|-----|
+| HC-SR04 Trig | BCM 27 |
+| HC-SR04 Echo | BCM 22 |
+| Servo | BCM 17 |
+| Relay | BCM 4 |
+
+## Dependencies
+
+- Python: `RPi.GPIO`, `pyserial`, `opencv-python`
+- Arduino: `Servo.h`
